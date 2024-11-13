@@ -1,0 +1,11 @@
+#1 SO : https://services.kanilebettu.in/v1/md/so/
+
+#2 SP : https://services.kanilebettu.in/v1/md/sp/so/16eca7e1-65e6-4067-aede-4ff97181fc29/
+
+    https://services.kanilebettu.in/v1/md/sp/so/ea2530ef-c233-4f10-b190-46daf9f4c8ab/
+
+GetAllSO using #1 
+For each so id we need to query for salepad service to get the bid and weighing detaails. 
+
+
+

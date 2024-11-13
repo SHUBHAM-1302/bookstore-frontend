@@ -1,0 +1,3426 @@
+openapi: 3.0.1
+info:
+  title: Salespad
+  description: "This would cover the definition and documentation of the salespad service along with the REST end
+                point, incoming request payload format and different responses for processing the commodity lots of the seller
+                by the receving entities. Receving entities will facilitate buyer and seller to bid and sell the lot either by
+                splitting or as is. REST end points would use the host and port defined by the admin and the end points would follow
+                the usual standards and best practices as defined on the general REST API documentations. The http
+                method type would define the underlying action."
+  termsOfService: 'http://kanilebettu.com'
+  contact:
+    email: merco@kanilebettu.com
+  license:
+    name: KANILEBETTU
+    url: 'http://kanilebettu.com'
+  version: 0.0.1
+servers:
+  - url: 'https://services.kanilebettu.in'
+paths:
+  '/v1/md/sp/health/':
+    get:
+      tags:
+        - SpHealth
+      summary: get the health of the service
+      operationId: getSalePadHealth
+      responses:
+        '200':
+          description: OK
+        '504':
+          description: Internal Database Conectivity Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/summary/so/{soid}/':
+    get:
+      tags:
+        - BidGrouping
+      summary: get salesSummary from Sale order id
+      description:  get salesSummary from Sale order id
+      operationId: getSalesSummaryFromSoId
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+
+      responses:
+        '200':
+          description: salesSummary status are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalespadWeightSumData'
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  '/v1/md/sp/{receiverid}/so/{soid}/':
+    post:
+      tags:
+        - SalePad
+      summary: create sale pad based on Sale order id
+      description: create sale pad based on sale id
+      operationId: createSalepad
+      parameters:
+        - name: receiverid
+          in: path
+          description: A unique identifier for organisation
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Sale pad status are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalePad'
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/so/{soid}/':
+    get:
+      tags:
+        - SalePad
+      summary: get salepad id from Sale order id
+      description: create sale pad based on sale id
+      operationId: getSalepadFromsoId
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+      responses:
+        '200':
+          description: Sale pad status are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalePad'
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/{spadid}/':
+    get:
+      tags:
+        - SalePad
+      summary: get summary of sale pad based on Salespad Id
+      description: request to send all sale pad
+      operationId: getSalePadSummarybyspadId
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+      responses:
+        '200':
+          description: Sale pad status are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesPadSummary'
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - SalePad
+      summary: delete salepad based on spadId
+      description: delete salepad based on spadId
+      operationId: deleteSalepad
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/sp/{spadid}/status/':
+    get:
+      tags:
+        - SalePad
+      summary: get status of sale pad based on salespad Id
+      description: get status of sale pad based on sales pad id
+      operationId: getSalePadStatusbySpadID
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+      responses:
+        '200':
+          description: Sale pad status are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalespadStatus'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      tags:
+        - SalePad
+      summary: Patch status of sale pad based on salespad Id
+      description: Patch status of sale pad based on sales pad id
+      operationId: updateSalePadStatusbySpadID
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SPPatchDocument'
+      responses:
+        '200':
+          description: Sale pad status are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalePad'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/bid/':
+    get:
+      tags:
+        - SalePad
+      summary: get the bids for search criteria
+      description: get the bids for search criteria
+      operationId: getBidsByMark
+      parameters:
+        - name: status
+          in: query
+          description: Search criteria for status of bid.
+          required: true
+          schema:
+            type: string
+            enum:
+              - OPEN
+              - INPROGRESS
+              - POSTWEIGHING
+              - COMPLETED
+        - name: buyerMark
+          in: query
+          description: Search criteria
+          required: true
+          schema:
+            type: string
+            example: "A"
+        - name: additionalMark
+          in: query
+          description: Search criteria
+          schema:
+            type: string
+            nullable: true
+            example: "B"
+
+
+      responses:
+        '200':
+          description: Bids are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BuyerLotBid'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/sp/{spadid}/weigh/':
+    get:
+      tags:
+        - SalePad
+      summary: get the discarded weights for salepad
+      operationId: getDiscardedWeighingInfoForSalepad
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+      responses:
+        '200':
+          description: Discarded WeighingInfos are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WeighingInfo'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/bid/buyer/':
+    get:
+      tags:
+        - BuyerLotSalePad
+      summary: get the bids for search criteria
+      description: get the bids for search criteria
+      operationId: getBidsByBuyerUUID
+      parameters:
+        - name: status
+          in: query
+          description: Search criteria for status of bid.
+          required: true
+          schema:
+            type: string
+            enum:
+              - OPEN
+              - INPROGRESS
+              - POSTWEIGHING
+              - COMPLETED
+        - name: buyerUUID
+          in: query
+          description: Search criteria
+          required: true
+          schema:
+            type: string
+            format: uuid
+            nullable: true
+            example: "C"
+        - name: brokerUUID
+          in: query
+          description: Search criteria
+          schema:
+            type: string
+            nullable: true
+            format: uuid
+            example: "C"
+        - name: aliasMark
+          in: query
+          description: Search criteria
+          schema:
+            type: string
+            nullable: true
+            example: "C"
+
+      responses:
+        '200':
+          description: Lot splits are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BuyerLotBid'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/sp/{soid}/lot/ltsplt/':
+    get:
+      tags:
+        - LotSplitSalePad
+      summary: get the lot split details for specific soid associated
+      description: get the lot split details for specific lots of soid
+      operationId: getLotSplitbySoId
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+
+
+      responses:
+        '200':
+          description: Lot splits are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LotSplit'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/sp/{spadid}/lot/{lotid}/ltsplt/':
+    get:
+      tags:
+        - LotSplitSalePad
+      summary: get the lot split details for specific lot of a seller
+      description: get the lot split details for specific lot of a seller
+      operationId: getLotSplitbyLidSid
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+
+      responses:
+        '200':
+          description: Lot splits are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotSplit'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - LotSplitSalePad
+      summary: create lot split for selected seller and lot id
+      operationId: createLotSplitBySidLid
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Creates new Lot split record with unqiue split id for the transcation
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotSplit'
+        required: true
+      responses:
+        '201':
+          description: Lot split created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotSplit'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      tags:
+        - LotSplitSalePad
+      summary: update lotsplit sale pad
+      description: Carries out patch operation and returns updated object
+      operationId: updateLotSplit
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/SPPatchRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotSplit'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - LotSplitSalePad
+      summary: delete lot split by lot id
+      description: delete lot split by lot id
+      operationId: deleteLotSplit
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/{spadid}/{lotid}/broker/{ltbrokerid}/':
+    patch:
+      tags:
+        - BuyerSalePad
+      summary: update lotBroker sale pad
+      description: Carries out patch operation and returns updated object
+      operationId: updateLotBroker
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: ltbrokerid
+          in: path
+          description: A unique identifier for the LotBroker
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/SPPatchDocument'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotBroker'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/{spadid}/{lotid}/buyer/':
+
+    get:
+      tags:
+        - BuyerSalePad
+      summary: get buyers for the current salespad
+      operationId: getBuyerForSalespad
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+
+      responses:
+        '200':
+          description: Buyer get successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LotBuyer'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+    post:
+      tags:
+        - BuyerSalePad
+      summary: create new buyer for the current salespad
+      operationId: createBuyer
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Creates new buyer record with unqiue buyer id for the transcation
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotBuyer'
+        required: true
+      responses:
+        '201':
+          description: Buyer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotBuyer'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/{spadid}/{lotid}/buyer/mark/{mark}/':
+    get:
+      tags:
+        - BuyerSalePad
+      summary: get buyers for the current salespad By mark
+      operationId: getBuyerByMarkForSalespad
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: mark
+          in: path
+          description: A unique identifier for salespad
+          required: true
+          schema:
+            type: string
+            format: string
+            example: "m"
+        - name: splitId
+          in: query
+          description: A unique identifier for salespad
+          schema:
+            type: integer
+            format: Int64
+            example: 123
+        - name: buyerUuid
+          in: query
+          description: A unique identifier for salespad
+          schema:
+            type: string
+            format: uuid
+            example: "ae915c4b-ae5f-4a7a-a5ba-ed9eaa8e617b"
+
+      responses:
+        '200':
+          description: Buyer get successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotBuyer'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  '/v1/md/sp/{spadid}/{lotid}/buyer/{ltbuyid}/':
+    delete:
+      tags:
+        - BuyerSalePad
+      summary: delete buyer with buyer id .
+      description: delete buyer with buyer id .
+      operationId: deleteBuyerById
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: ltbuyid
+          in: path
+          description: A unique identifier of buyer for the lot .
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 123456890
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: buyer deleted
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      tags:
+        - BuyerSalePad
+      summary: update lotBuyer sale pad
+      description: Carries out patch operation and returns updated object
+      operationId: updateLotBuyer
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: ltbuyid
+          in: path
+          description: A unique identifier for the LotBuyer
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/SPPatchDocument'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotBuyer'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/{spadid}/{lotid}/bid/':
+    get:
+      tags:
+        - BuyerLotSalePad
+      summary: get all bids for selected lot id.
+      description: get all the bids for selected lot id from seller .
+      operationId: getBidsbasedOnLotId
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: lotid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: splitId
+          in: query
+          description: A unique identifier of lot split
+          schema:
+            type: integer
+            format: int64
+            example: 489
+      responses:
+        '200':
+          description: Buyers are successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BuyerLotBid'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/{spadid}/{lotid}/{ltbuyid}/bid/':
+    post:
+      tags:
+        - BuyerLotSalePad
+      summary: create new bids for goods purchase from sales pad
+      operationId: createBiDLotForBuyer
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for the Salepad
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: lotid
+          in: path
+          description: A unique identifier buyer
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: ltbuyid
+          in: path
+          description: A unique identifier of buyer for the lot .
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 123456890
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Creates the bid lot for Salespad
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidLotInput'
+
+      responses:
+        '201':
+          description: Bid Lot created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidLot'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/bid/{spid}/':
+    get:
+      tags:
+        - BuyerLotSalePad
+      summary: get bid based on spID
+      description: get bid based on spID
+      operationId: getBidbasedOnSpId
+      parameters:
+        - name: spid
+          in: path
+          description: A unique identifier for the bid lot id
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuyerLotBid'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/{spadid}/{lotid}/{ltbuyid}/bid/{spid}/':
+
+    get:
+      tags:
+        - BuyerLotSalePad
+      summary: get bid for the spadId based on spID
+      description: gets the buyer bid details for spId
+      operationId: getBuyerbasedOnSpId
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for the salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: lotid
+          in: path
+          description: A unique identifier buyer
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: ltbuyid
+          in: path
+          description: A unique identifier of buyer for the lot .
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 123456890
+        - name: spid
+          in: path
+          description: A unique identifier for the bid lot id
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuyerLotBid'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - BuyerLotSalePad
+      summary: update BidLot based on spId .
+      description: Carries out patch operation and returns updated object
+      operationId: updateBuyerBid
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for the salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: lotid
+          in: path
+          description: A unique identifier buyer
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: ltbuyid
+          in: path
+          description: A unique identifier of buyer for the lot .
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 123456890
+        - name: spid
+          in: path
+          description: A unique identifier for the bid lot id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/SPPatchRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidLot'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - BuyerLotSalePad
+      summary: delete bid lot assocaited for buyer
+      description: Deletes bid lot of the buyer
+      operationId: deleteBuyerBidLot
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for the Salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: lotid
+          in: path
+          description: A unique identifier buyer
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: ltbuyid
+          in: path
+          description: A unique identifier of buyer for the lot .
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 123456890
+        - name: spid
+          in: path
+          description: A unique identifier for the bid lot id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/sp/{spadid}/buyer/{ltbuyid}/weigh/{spid}/':
+    get:
+      tags:
+        - BuyerLotSalePad
+      summary: get weighing datas for salespad for particular lot bidded by buyer
+      description: get weighing datas for salespad for particular lot bidded by buyer
+      operationId: getWeighingDataForLotFromBuyer
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for salespad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: ltbuyid
+          in: path
+          description: A unique identifier of buyer for the lot .
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 123456890
+        - in: path
+          name: spid
+          description: sp id created during the bid creation
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: sp-b20-a40
+
+      responses:
+        '200':
+          description: Buyers are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WeighingInfo'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/wp/writer/{wrid}/logs/':
+    get:
+      tags:
+        - WriterPad
+      summary: get weighing logs for writer
+      description: get weighing logs for writer
+      operationId: getWeighinglogsforWriter
+      parameters:
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Buyers are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BuyerWeighingInfoOutput'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/{spadid}/wp/writer/{wrid}/{spid}/':
+    get:
+      tags:
+        - WriterPad
+      summary: get bid details based on spID
+      description: get bid details based on spID
+      operationId: getBidDetailsforspId
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: spid
+          in: path
+          description: sp id created during the bid creation
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: sp-b20-a40
+      responses:
+        '200':
+          description: BuyerLot bid is summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BuyerLotBid'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/wp/writer/{wrid}/weigh/':
+    post:
+      tags:
+        - WriterPad
+      summary: creates the weighing data obtained from weighing scale
+      operationId: createWeighingInfo
+      parameters:
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Creates new weighing info record with unqiue weighhing id for the transcation
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeighingInfo'
+        required: true
+      responses:
+        '201':
+          description: WeighingInfo created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeighingInfo'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/sp/{spadid}/wp/writer/{wrid}/{spid}/weigh/':
+    delete:
+      tags:
+        - WriterPad
+      summary: delete weighing data for spId based on weighing seq
+      description: delete weighing data for spId based on weighing seq
+      operationId: deleteWeighingDataforSeq
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: spid
+          in: path
+          description: sp id created during the bid creation
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: sp-b20-a40
+        - name: weighSeq
+          in: query
+          description: Weighing sequence of the spId
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - WriterPad
+      summary: update the weighingInfo
+      description: updates the weighing info for transfer or correction
+      operationId: updateWeighingInfo
+      parameters:
+        - name: spadid
+          in: path
+          description: A unique identifier for sales pad
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: spid
+          in: path
+          description: sp id created during the bid creation
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: sp-b20-a40
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/WeighingInfoPatchRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WeighingInfo'
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/sp/wp/writer/{wrid}/sheet/':
+    get:
+      tags:
+        - WriterPad
+      summary: get writer day sheet with sequence of spid maintained
+      description: get weighing datas for the writer
+      operationId: getWriterSheetforSpadId
+      parameters:
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Buyers are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WriterDaySheetItem'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - WriterPad
+      summary: creates the writer specific spid sequence
+      operationId: createWriterSheetItem
+      parameters:
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriterDaySheetItem'
+        required: true
+      responses:
+        '201':
+          description: WeighingInfo created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriterDaySheetItem'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      tags:
+        - WriterPad
+      summary: update writer pad sheet
+      description: updates the writer pad on account of transfers or takeovers
+      operationId: updateWriterPadSheet
+      parameters:
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/SPPatchDocument'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WriterDaySheetItem'
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - WriterPad
+      summary: delete the worksheet items related to wrId
+      operationId: deleteWriterSheetItem
+      parameters:
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/sp/wp/writer/{wrid}/sheet/{sheetdate}/':
+    delete:
+      tags:
+        - WriterPad
+      summary: delete the worksheet items related to wrId before the given date
+      operationId: deleteWriterSheetItemByDate
+      parameters:
+        - name: wrid
+          in: path
+          description: A unique identifier of writer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: sheetdate
+          in: path
+          description: The date from which the items should be deleted
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: userId
+          in: header
+          description: A unique identifier for user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: >-
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    SalePad:
+      type: object
+      properties:
+        soId:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Sale Order id
+        spadId:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Sale pad id
+        receiverId:
+          type: string
+          format: uuid
+          readOnly: true
+          description: uuid of organization
+        receiverfirstName:
+          type: string
+          format: string
+          readOnly: true
+          description: first name of organization
+        receiverLastName:
+          type: string
+          format: string
+          readOnly: true
+          description: first name of organization
+        receiverUserName:
+          type: string
+          format: string
+          readOnly: true
+          description: first name of organization
+        salepadStatus:
+          $ref: '#/components/schemas/SalePadStatus'
+        salespadsummary:
+          $ref: '#/components/schemas/SalesPadSummary'
+        lotsplits:
+          type: array
+          description: list of lot split
+          items:
+            $ref: '#/components/schemas/LotSplit'
+    SalePadStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Different states of Salepad.
+          example: INPROGRESS
+          enum:
+            - OPEN
+            - INPROGRESS
+            - COMPLETED
+
+    SalesPadSummary:
+      type: object
+      description: aggregation of the lot bid details
+      properties:
+        lotBidWeigheds:
+          type: array
+          description: list of lots which are bidded and weighed
+          items:
+            $ref: '#/components/schemas/LotBidData'
+
+    BidSummaryData:
+      type: object
+      description: Provides summary of Bid placed and weighed for lot
+      properties:
+        bidQuantity:
+          type: integer
+          format: int32
+          description: number of lot quantity for which bid is placed
+          example: 20
+        rate:
+          type: number
+          format: double
+          description: maximum bid price placed for the lot
+          example: 2400.50
+        totalWeight:
+          type: number
+          format: double
+          description: number of lot quantity for which weighing is completed
+          example: 10
+        spIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        weighingStatus:
+          $ref: '#/components/schemas/BidStatus'
+
+
+    LotSummaryData:
+      type: object
+      properties:
+        lotId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Lot id of bids
+        lotTotalWeight:
+          type: number
+          format: double
+          description: Total lot weight
+          example: 2400.50
+        collatedBids:
+          type: array
+          items:
+            $ref: '#/components/schemas/BidSummaryData'
+
+    SalespadWeightSumData:
+      type: object
+      properties:
+        salespadTotalWeight:
+          type: number
+          format: double
+          description: Total lot weight
+          example: 2400.50
+        lotSummaryData:
+          type: array
+          items:
+            $ref: '#/components/schemas/LotSummaryData'
+    LotBidData:
+      type: object
+      description: Provides summary of Bid placed and weighed for lot
+      properties:
+        bidQuantity:
+          type: integer
+          format: int32
+          description: number of lot quantity for which bid is placed
+          example: 20
+        maxBidPrice:
+          type: number
+          format: double
+          description: maximum bid price placed for the lot
+          example: 2400.50
+        minBidPrice:
+          type: number
+          format: double
+          description: minimum bid price placed for the lot
+          example: 2200.75
+        weighed:
+          type: integer
+          format: int32
+          description: number of lot quantity for which weighing is completed
+          example: 10
+        lotId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Lot id of the Lot
+        splitId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: splitId for which split is done
+
+
+    LotSplit:
+      required:
+        - splitquantity
+        - name
+        - lotId
+      type: object
+      properties:
+        splitId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Lot split id generated on successful insertion
+        name:
+          type: string
+          description: identification of buyer
+          format: string
+          example: ABC-SP1
+        splitquantity:
+          type: integer
+          description: split qunatity from the lot
+          format: int32
+          example: 10
+        lotId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Lot id for which split is done
+          example: 1234
+
+    LotBuyer:
+      required:
+        - buyId
+        - mark
+        - lotId
+      type: object
+      properties:
+        buyId:
+          type: string
+          format: uuid
+          description: buyer id obtained from the access management
+          example: "b563e9a7-b499-4161-91c8-fa3e7d351b1e"
+        FirstName:
+          type: string
+          format: string
+          readOnly: true
+          description: buyer first name obtained from the access management
+        LastName:
+          type: string
+          format: string
+          readOnly: true
+          description: buyer last name obtained from the access management
+        UserName:
+          type: string
+          format: string
+          readOnly: true
+          description: buyer user name obtained from the access management
+        mark:
+          type: string
+          description: identification of buyer for specific sale order
+          example: B1
+        temporary:
+          type: boolean
+          description: to classify the buyer registered or non registered
+        lotId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Lot id for which split is done
+          example: 123
+        splitId:
+          type: integer
+          format: int64
+          description: split id of the lot
+          example: 123
+        lotBuyId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Buyer mark associated with
+          example: 123
+
+    LotBroker:
+      type: object
+      properties:
+        brokerId:
+          type: string
+          format: uuid
+          description: broker id obtained from the access management
+          example: "b563e9a7-b499-4161-91c8-fa3e7d351b1e"
+        FirstName:
+          type: string
+          format: string
+          readOnly: true
+          description: buyer first name obtained from the access management
+        LastName:
+          type: string
+          format: string
+          readOnly: true
+          description: buyer Last name obtained from the access management
+        UserName:
+          type: string
+          format: string
+          readOnly: true
+          description: buyer user name obtained from the access management
+        mark:
+          type: string
+          description: identification of broker for specific sale order
+          example: A1
+        lotBrokerId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Broker mark associated with
+          example: 123
+        lotId:
+          type: integer
+          format: int64
+          description: Lot id for which split is done
+          example: 123
+
+    BidLotInput:
+      required:
+        - bidPrice
+        - bidquantity
+        - bidmode
+      type: object
+      properties:
+        bidquantity:
+          type: integer
+          description: bid qunatity from the buyer for the lot
+          format: int32
+          example: 10
+        bidPrice:
+          type: number
+          format: double
+          description: bid amount from the buyer for the lot
+          example: 700.50
+        advancePrice:
+          type: number
+          format: double
+          description: advance amount paid by the buyer
+          example: 2000.50
+        bidmode:
+          $ref: '#/components/schemas/BidMode'
+        aliasbuyer:
+          $ref: '#/components/schemas/AliasBuyer'
+        lotBroker:
+          $ref: '#/components/schemas/LotBroker'
+
+    BidLot:
+      type: object
+      properties:
+        bidId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Bid id generated on successful insertion
+          example: 489
+        spId:
+          type: string
+          format: uuid
+          readOnly: true
+          example: sp-b20-a40
+          description: generated for bid used for transcation management
+        bidquantity:
+          type: integer
+          description: bid qunatity from the buyer for the lot
+          format: int32
+          example: 10
+        bidPrice:
+          type: number
+          format: double
+          description: bid amount from the buyer for the lot
+          example: 700.50
+        advancePrice:
+          type: number
+          format: double
+          description: advance amount paid by the buyer
+          example: 2000.50
+        totalWeight:
+          type: number
+          format: double
+          description: summed up weight info of the bidded lot
+          example: 48.5
+        lotId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Lot id for which split is done
+          example: 1234
+        lotBuyer:
+          $ref: '#/components/schemas/LotBuyer'
+        status:
+          $ref: '#/components/schemas/BidStatus'
+        mode:
+          $ref: '#/components/schemas/BidMode'
+        aliasbuyer:
+          $ref: '#/components/schemas/AliasBuyer'
+        lotBroker:
+          $ref: '#/components/schemas/LotBroker'
+
+    BuyerLotBid:
+      type: object
+      properties:
+        lotBuyer:
+          $ref: '#/components/schemas/LotBuyer'
+        aliasbuyer:
+          $ref: '#/components/schemas/AliasBuyer'
+        lotBroker:
+          $ref: '#/components/schemas/LotBroker'
+        spId:
+          type: string
+          format: uuid
+          example: sp-b20-a40
+          description: generated for bid used for transcation management
+        bidquantity:
+          type: integer
+          description: bid qunatity from the buyer for the lot
+          format: int32
+          example: 10
+        weighedQuantity:
+          type: integer
+          description: bid lot weighed completed
+          format: int32
+          example: 5
+        absoluteTotalWeight:
+          type: number
+          format: double
+          description: total weight of bid
+          example: 700.50
+        updatedTotalWeight:
+          type: number
+          format: double
+          description: updated total weight of bid
+          example: 700.50
+        bidPrice:
+          type: number
+          format: double
+          description: bid amount from the buyer for the lot
+          example: 700.50
+        status:
+          $ref: '#/components/schemas/BidStatus'
+        mode:
+          $ref: '#/components/schemas/BidMode'
+        advancePrice:
+          type: number
+          format: double
+          description: advance amount paid by the buyer
+          example: 2000.50
+
+    BidStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Different states of BidStatus.
+          example: INPROGRESS
+          enum:
+            - OPEN
+            - INPROGRESS
+            - POSTWEIGHING
+            - COMPLETED
+    BidMode:
+      type: object
+      description: Indicates different modes of bidding
+      properties:
+        status:
+          type: string
+          description: Different modes of bidding.
+          example: NORMAL
+          enum:
+            - NORMAL
+            - CROSS-OVER
+            - SELF
+
+    AliasBuyer:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Bidded for alias buyer by main bidder
+          example: "MICHAL"
+
+    WeighingInfo:
+      required:
+        - spId
+        - deviceid
+        - writerId
+        - quantityWeight
+        - updatedQuantityWeight
+        - status
+      type: object
+      properties:
+        wghId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Generated on successful creation of weighing data
+          example: 489
+        spId:
+          type: string
+          format: uuid
+          example: "b563e9a7-b499-4161-91c8-fa3e7d351b1e"
+          description: generated for bid used for transcation management
+        createdAt:
+          readOnly: true
+          type: string
+          format: date-time
+          description: the time at which the weighingInfo is created
+        quantitySequence:
+          readOnly: true
+          type: integer
+          description: qunatity number being weighed
+          format: int32
+          example: 1
+        quantityWeight:
+          type: number
+          format: double
+          description: weight of bag
+          example: 48.5
+        updatedQuantityWeight:
+          type: number
+          format: double
+          description: updated weight of bag
+          example: 48.5
+        deviceid:
+          type: string
+          format: string
+          example: NTC-dev-1
+          description: weighing data
+        writerId:
+          type: string
+          format: uuid
+          readOnly: true
+          description: actor involved weighing data
+        wrFirstName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: firstName of the writer.
+        wrLastName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: LastName of the writer.
+        wrUserName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: UserName of the writer.
+        status:
+          $ref: '#/components/schemas/WeighingInfoStatus'
+
+    BuyerWeighingInfoOutput:
+      type: object
+      properties:
+        lotbuyId:
+          type: integer
+          format: int64
+          description: The lotbuyer id
+        buyermark:
+          type: string
+          description: the mark of the lotbuyer
+        aliasmark:
+          type: string
+          description: the mark of the alias
+        lotbrokermark:
+          type: string
+          description: the mark of the lotbroker
+        wghId:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Generated on successful creation of weighing data
+          example: 489
+        spId:
+          type: string
+          format: uuid
+          example: "b563e9a7-b499-4161-91c8-fa3e7d351b1e"
+          description: generated for bid used for transcation management
+        createdAt:
+          readOnly: true
+          type: string
+          format: date-time
+          description: the time at which the weighingInfo is created
+        quantitySequence:
+          readOnly: true
+          type: integer
+          description: quantity number being weighed
+          format: int32
+          example: 1
+        quantityWeight:
+          type: number
+          format: double
+          description: weight of bag
+          example: 48.5
+        updatedQuantityWeight:
+          type: number
+          format: double
+          description: updated weight of bag
+          example: 48.5
+        deviceid:
+          type: string
+          format: string
+          example: NTC-dev-1
+          description: weighing data
+        writerId:
+          type: string
+          format: uuid
+          readOnly: true
+          description: actor involved weighing data
+        wrFirstName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: firstName of the writer.
+        wrLastName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: LastName of the writer.
+        wrUserName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: UserName of the writer.
+        status:
+          $ref: '#/components/schemas/WeighingInfoStatus'
+
+
+    WeighingInfoStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Different states of BidStatus.
+          example: NORMAL
+          enum:
+            - NORMAL
+            - DISCARDED
+
+    SPPatchRequest:
+      type: array
+      items:
+        $ref: "#/components/schemas/SPPatchDocument"
+
+    SPPatchDocument:
+      description: A JSONPatch document as defined by RFC 6902
+      required:
+        - "op"
+        - "path"
+      properties:
+        op:
+          type: string
+          description: The operation to be performed
+          enum:
+            - "add"
+            - "remove"
+            - "replace"
+            - "move"
+            - "copy"
+            - "test"
+        path:
+          type: string
+          description: A JSON-Pointer
+        value:
+          type: object
+          description: The value to be used within the operations.
+        from:
+          type: string
+          description: A string containing a JSON Pointer value.
+
+    WeighingInfoPatchRequest:
+      description: An object containing list weiginfo id and Patch
+      type: object
+      required:
+        - 'wghIds'
+        - 'SPPatchDocument'
+      properties:
+        wghIds:
+          $ref: '#/components/schemas/ArrayOfId'
+        SPPatchDocument:
+          $ref: '#/components/schemas/SPPatchDocument'
+
+    ArrayOfId:
+      type: array
+      items:
+        type: integer
+        format: int64
+        example: [1,3,6]
+
+    WriterDaySheetItem:
+      required:
+        - spId
+        - soid
+      type: object
+      properties:
+        spId:
+          type: string
+          format: uuid
+          example: sp-b20-a40
+          description: generated for bid used for transcation management
+        position:
+          type: integer
+          readOnly: true
+          description: sequence in which the spId are scanned and stored
+          format: int32
+          example: 1
+        wrId:
+          type: string
+          format: uuid
+          readOnly: true
+          example: sp-b20-a40
+          description: unique id of the writer.
+        wrFirstName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: firstName of the writer.
+        wrLastName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: LastName of the writer.
+        wrUserName:
+          type: string
+          format: string
+          readOnly: true
+          example: raj
+          description: UserName of the writer.
+        soid:
+          type: string
+          format: uuid
+          description: unique id of the sale order
+    Error:
+      title: Error
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error Code
+          format: Int32
+          example: 400
+        message:
+          type: string
+          description: Error Message
+          example: some sample error
+        rootCause:
+          type: string
+          description: The root cause
+          example: the root cause of the error
+        advice:
+          type: string
+          description: The possible solution to the error
+          example: an advice with which the error could be resolved
+      description: Error Payload
+
+    SalespadStatus:
+      title: Status
+      type: object
+      properties:
+        Status:
+          type: string
+          example: "OPEN"

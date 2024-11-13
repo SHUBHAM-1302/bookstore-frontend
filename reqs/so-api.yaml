@@ -1,0 +1,1669 @@
+openapi: 3.0.1
+info:
+  title: SaleOrder
+  description: "This would cover the definition and documentation of the sale order along with the REST end
+                point, incoming request payload format and different responses for creating a sale order and frieght. All the
+                REST end points would use the host and port defined by the admin and the end points would follow
+                the usual standards and best practices as defined on the general REST API documentations. The http
+                method type would define the underlying action."
+  termsOfService: 'http://kanilebettu.com'
+  contact:
+    email: merco@kanilenttu.com
+  license:
+    name: KANILEBETTU
+    url: 'http://kanilebettu.com'
+  version: 0.0.2
+servers:
+  - url: 'https://services.kanilebettu.in/'
+paths:
+
+  '/v1/md/so/health/':
+    get:
+      tags:
+        - MsHealth
+      summary: get health of service
+      description: get health of service
+      operationId: getHealth
+      responses:
+        '200':
+          description: OK
+
+
+  '/v1/md/so/':
+    get:
+      tags:
+        - SaleOrder
+      summary: get all sale order
+      description: request to send all sale orders
+      operationId: getAllSaleOrder
+      parameters:
+        - name: count
+          in: query
+          description: number of saleorder in the response will be equal to or less than value provided for count.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: attrName
+          # For first version vehicle and seller
+          in: query
+          description: Name of attribute to be used to filter sales order. If attributeName is given then relavant attributeValue should also be given else attributeName is ignored for filtering.
+          required: false
+          schema:
+            type: string
+            enum: [Home,Vehicle, Seller, Location, Lot,PackageType,CommodityType, CommoditySubType]
+            default: Vehicle
+        - name: attrValue
+          in: query
+          description: value of attribute name to be used to filter saleorder. If attributeValue is empty then attributeName is ignored for filtering.
+          required: false
+          schema:
+            type: string
+        # For first release sorting is supported only with createdOn field.
+        - name: sortBy
+          in: query
+          description: attribute name on which sorting has to be performed.
+          required: false
+          schema:
+            type: string
+            enum: [createdOn]
+            default: createdOn
+        - name: sortType
+          in: query
+          description: type of sorting - ascending or descending
+          required: false
+          schema:
+            type: string
+            enum: [ascending, descending]
+            default: descending
+      responses:
+        '200':
+          description: Sales orders are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SaleOrderResponse'
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '208':
+          description: Already Reported
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - SaleOrder
+      summary: create a sale order
+      description: create a sale order with given details
+      operationId: createSaleOrder
+      responses:
+        '201':
+          description: SaleOrder created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSaleOrderResponse'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content: {}
+  '/v1/md/so/slr/':
+    post:
+      tags:
+        - SaleOrder
+      summary: get Saleorders by Seller Ids
+      operationId: getSaleOrdersBySellerIds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              items:
+                type: string
+                format: uuid
+        required: true
+      responses:
+        '200':
+          description: Sales orders are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SaleOrderResponse'
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '208':
+          description: Already Reported
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/so/{soid}/lot/':
+    get:
+      tags:
+        - SaleOrder
+      summary: get lot details of a sale order.
+      operationId: getLotsOfSaleOrder
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: requested project sent successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lot'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/so/{soid}/lot/{lid}/':
+    get:
+      tags:
+        - SaleOrder
+      summary: get single lot details by lot id.
+      operationId: getLotbyLotId
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: lid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+      responses:
+        '200':
+          description: requested project sent successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/so/{soid}/':
+    get:
+      tags:
+        - SaleOrder
+      summary: get details of a sale order.
+      operationId: getSaleOrder
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: requested project sent successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaleOrder'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - SaleOrder
+      summary: delete a sale order
+      description: Deletes a sale order and all contained resources.
+      operationId: deleteSaleOrder
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the project
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: sale order deleted successfully.
+          content: {}
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/so/{soid}/status':
+    get:
+      tags:
+        - SaleOrderStatus
+      summary: get current status of sale order based on id
+      description: get current status of sale order based on id
+      operationId: getSaleOrderStatusbyId
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Sale order status are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaleOrderStatus'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/v1/md/so/{soid}/frg/':
+    get:
+      tags:
+        - FreightSaleOrder
+      summary: get a freight based on sale order id
+      description: get a freight based on sale order id
+      operationId: GetFreight
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+
+      responses:
+        '200':
+          description: Freight for sale order are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Freight'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - FreightSaleOrder
+      summary: create a freight based on sale order id
+      operationId: createFreightSaleOrder
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+      requestBody:
+        description: Creates new freight record with unqiue freight id for the transcation
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Freight'
+        required: true
+      responses:
+        '201':
+          description: Freight for sale order is created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Freight'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content: {}
+    patch:
+      tags:
+        - FreightSaleOrder
+      summary: update freight record
+      description: Carries out patch operation and returns updated object
+      operationId: updateFreight
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/PatchRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Freight'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content: {}
+
+    delete:
+      tags:
+        - FreightSaleOrder
+      summary: delete a Freight
+      description: Deletes a Freight
+      operationId: deleteFreight
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '208':
+          description: Already Reported
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content: {}
+  '/v1/md/so/{soid}/cmd/slr/':
+    get:
+      tags:
+        - SellerCmdSaleOrder
+      summary: get all seller for the sale order id
+      description: get all seller details based on sale order id
+      operationId: GetAllSeller
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        '200':
+          description: Sellers for sale order are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SellerSOResponse'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - SellerCmdSaleOrder
+      summary: create a seller based on sale order id
+      operationId: createSellerForSO
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+      requestBody:
+        description: Creates a seller record with unqiue id
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Seller'
+        required: true
+      responses:
+        '201':
+          description: Campaign created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SellerResponse'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content: {}
+  '/v1/md/so/{soid}/cmd/slr/{slrid}/':
+    patch:
+      tags:
+        - SellerCmdSaleOrder
+      summary: update seller details
+      description: Carries out patch operation and returns updated object
+      operationId: updateSellerDetails
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: slrid
+          in: path
+          description: A unique identifier of sale id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/PatchRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Seller'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content: {}
+    delete:
+      tags:
+        - SellerCmdSaleOrder
+      summary: delete a seller based on sale order and seller id
+      description: delete a seller based on sale order and seller id
+      operationId: deleteSellerbyID
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: slrid
+          in: path
+          description: A unique identifier of sale id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+      responses:
+        '200':
+          description: Ok
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content: {}
+  '/v1/md/so/{soid}/cmd/slr/{slrid}/lot':
+    get:
+      tags:
+        - SellerCmdSaleOrder
+      summary: get all lot deatils for sale order and seller id
+      description: get all lot deatils based on sale order id and seller id
+      operationId: GetAlllotForSellerIDSaleOrderID
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: slrid
+          in: path
+          description: A unique identifier of sale id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+      responses:
+        '200':
+          description: Seller lot for sale order are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SellerResponse'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - SellerCmdSaleOrder
+      summary: create lot for seller based on sale order id and seller id
+      operationId: createSellerLotForSOID
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for sale order
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: slrid
+          in: path
+          description: A unique identifier of sale id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+      requestBody:
+        description: Creates a seller record with unqiue id
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lot'
+        required: true
+      responses:
+        '201':
+          description: Seller Lot created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content: {}
+  '/v1/md/so/{soid}/cmd/slr/{slrid}/lot/{lid}':
+    get:
+      tags:
+        - SellerCmdSaleOrder
+      summary: get lot deatils for sale order and seller id
+      description: get lot deatils based on sale order id and seller id
+      operationId: GetlotForLotId
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: slrid
+          in: path
+          description: A unique identifier of sale id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: lid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+      responses:
+        '200':
+          description: Lots are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - SellerCmdSaleOrder
+      summary: delete a lot based on sale order, seller id, lot id
+      description: delete a lot based on sale order, seller id, lot id
+      operationId: deletelotForLotId
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: slrid
+          in: path
+          description: A unique identifier of sale id
+          required: true
+          schema:
+            type: integer
+            format: uuid
+            example: 1234567
+        - name: lid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+      responses:
+        '200':
+          description: Ok
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '500':
+          description: Internal Server Error
+          content: {}
+    patch:
+      tags:
+        - SellerCmdSaleOrder
+      summary: update seller lot details
+      description: Carries out patch operation and returns updated object
+      operationId: updateLotDetails
+      parameters:
+        - name: soid
+          in: path
+          description: A unique identifier for the SaleOrder
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 1234567
+        - name: slrid
+          in: path
+          description: A unique identifier of sale id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+        - name: lid
+          in: path
+          description: A unique identifier of lot id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234567
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          new value.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/PatchRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+        '208':
+          description: Already Reported
+          content: {}
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content: {}
+
+
+
+
+
+
+components:
+  schemas:
+    PostSaleOrderResponse:
+      type: object
+      properties:
+        soid:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Sale Order id generated on successful insertion
+    SaleOrder:
+      type: object
+      required:
+        - sellers
+      properties:
+        soid:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Sale Order id generated on successful insertion
+        freightDetails:
+          $ref: '#/components/schemas/Freight'
+        receiverDetails:
+          $ref: '#/components/schemas/Receiver'
+        upsertInfo:
+          $ref: '#/components/schemas/UpsertInfo'
+        sellers:
+          type: array
+          description: details of commodity,device from recorded, actual weight
+          items:
+            $ref: '#/components/schemas/SellerResponse'
+
+    SaleOrderResponse:
+      type: object
+      properties:
+        groupname:
+          type: string
+          format: string
+          readOnly: true
+          description: Group name of search record
+        count:
+          type: integer
+          format: int64
+          readOnly: true
+          description: total search hit found
+        sorecords:
+          type: array
+          description: list of sale order records
+          items:
+            $ref: '#/components/schemas/SaleOrderRecord'
+
+    SaleOrderRecord:
+      type: object
+      properties:
+        soid:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Sale Order id generated on successful insertion
+        receiverDetails:
+          $ref: '#/components/schemas/Receiver'
+        vehcileNumber:
+          type: string
+          description: Vehicle Number carrying the Freight
+          format: string
+          example: KA-04 XY 1234
+        status:
+          $ref: '#/components/schemas/SaleOrderStatus'
+        location:
+          type: string
+          description: address summary
+          format: string
+          example: Channapatna, Ramnagara
+        createdAt:
+          type: string
+          format: date-time
+          description: SO Creation date
+          example: "2022-01-30T08:30:00Z"
+        lotsummary:
+          type: array
+          description: total
+          items:
+            $ref: '#/components/schemas/LotSummary'
+        lots:
+          type: array
+          description: details of lot label and count
+          items:
+            type: string
+        sellerCt:
+          type: integer
+          description: Number of seller for given SO
+          format: Int32
+          example: 2
+
+    SaleOrderStatus:
+      type: object
+      properties:
+        soid:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Sale Order id generated on successful insertion
+        status:
+          type: string
+          description: Different states of Sale order.
+          example: OPEN
+          enum:
+            - OPEN
+            - CLOSED
+            - INPROGRESS
+            - ARCHIVED
+
+    Seller:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: seller id generated on successful insertion
+        sellerUuid:
+          type: string
+          format: uuid
+          description: SellerUUid stored on successful insertion
+        sellerAddress:
+          $ref: '#/components/schemas/Address'
+
+    SellerResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: seller id generated on successful insertion
+        sellerUuid:
+          type: string
+          format: uuid
+          description: SellerUUid stored on successful insertion
+        sellerFirstName:
+          type: string
+          description: seller firstname from keycloak
+        sellerLastName:
+          type: string
+          description: seller lastname from keycloak
+        sellerUserName:
+          type: string
+          description: the username of the seller from keycloak
+        sellerAddress:
+          $ref: '#/components/schemas/Address'
+        lots:
+          type: array
+          description: details of commodity,device from recorded, actual weight
+          items:
+            $ref: '#/components/schemas/Lot'
+    Error:
+      title: Error
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error Code
+          format: Int32
+          example: 400
+        message:
+          type: string
+          description: Error Message
+          example: some sample error
+        rootCause:
+          type: string
+          description: The root cause
+          example: the root cause of the error
+        advice:
+          type: string
+          description: The possible soution to the error
+          example: an advice with which the error could be resolved
+      description: Error Payload
+
+    SellerSOResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: seller id generated on successful insertion
+        sellerUuid:
+          type: string
+          format: uuid
+          description: SellerUUid stored on successful insertion
+        sellerFirstName:
+          type: string
+          description: seller firstname from keycloak
+        sellerLastName:
+          type: string
+          description: seller lastname from keycloak
+        sellerUserName:
+          type: string
+          description: the username of the seller from keycloak
+        lots:
+          type: array
+          description: details of commodity,device from recorded, actual weight
+          items:
+            $ref: '#/components/schemas/LotSummary'
+
+    Lot:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: lot id generated on successful insertion
+        name:
+          type: string
+          description: identification of lot
+          format: string
+          example: ABC
+        packtypeid:
+          type: integer
+          format: int64
+          description: package type id generated on successful insertion
+        packtypeName:
+          type: string
+          description: name of the package type
+          example: Box
+          readOnly: true
+        quantity:
+          type: number
+          format: double
+          description: number of packages
+          example: 10
+        cmdTypeid:
+          type: integer
+          format: int64
+          description: cmd type id generated on successful insertion
+        cmdTypeName:
+          type: string
+          description: commodity name
+          format: string
+          example: ONION
+          readOnly: true
+        cmdSubType:
+          type: integer
+          format: int64
+          description: cmd sub type id generated on successful insertion
+
+    Receiver:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Registered receiver in merco
+          format: string
+          example: ABC_1970
+        recevierCode:
+          type: string
+          description: Unique Identifer of recevier
+          format: string
+          example: BLR_YPR_0001
+        recevierlocation:
+          type: string
+          description: destination to ship the commodities
+          format: string
+          example: trade-co,23,Bangalore
+
+    LotSummary:
+      type: object
+      properties:
+        packageType:
+          type: string
+          description: package type id
+          format: string
+          example: 2
+        packageName:
+          type: string
+          description: package type like bag, cartons
+          format: string
+          example: Bags
+        quantity:
+          type: number
+          format: double
+          description: number of packages of all the sellers
+          example: 100
+        lots:
+          type: array
+          description: id's of the lot
+          items:
+            type: integer
+
+    Freight:
+      type: object
+      properties:
+        frid:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Freight id generated on successful insertion
+        frtypeid:
+          type: integer
+          format: int64
+          description: Freight type id generated on successful insertion
+        frtypename:
+          type: string
+          description: Freight type name to be displayed
+          readOnly: true
+        vehicleNumber:
+          type: string
+          description: Vehicle Number carrying the Freight
+          format: string
+          example: KA-04-XY-1234
+        driverFirstName:
+          type: string
+          example: "Ram"
+          readOnly: true
+        driverLastName:
+          type: string
+          example: "Ram"
+          readOnly: true
+        driverUserName:
+          type: string
+          example: "9819239128"
+          readOnly: true
+        driverUuid:
+          type: string
+          format: uuid
+          description: driverUuid stored on successful insertion
+        FreightAddress:
+          $ref: '#/components/schemas/Address'
+        tonnage:
+          $ref: '#/components/schemas/FreightTonnage'
+        charges:
+          $ref: '#/components/schemas/FreightCharges'
+
+    FreightTonnage:
+      type: object
+      properties:
+        loadedWeight:
+          type: number
+          description: loaded weight of the freight
+          format: double
+          example: 999.999
+        unloadedWeight:
+          type: number
+          description: unloaded weight of the freight
+          format: double
+          example: 100.999
+        amount:
+          type: number
+          description: amount for the freight
+          format: double
+          example: 99.99
+
+    FreightCharges:
+      type: object
+      properties:
+        perValue:
+          type: number
+          description: Charges computed based on the count or kgs
+          format: double
+          example: 100
+        freightRate:
+          type: number
+          description: Charges for the freight
+          format: double
+          example: 99.99
+
+
+    Address:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: address id generated on successful insertion
+        address1:
+          type: string
+          description: main address information
+          format: string
+          example: 2nd Cross, Bharath Nagar
+        address2:
+          type: string
+          description: locality Info
+          format: string
+          example: Nelamangala
+        city:
+          type: string
+          description: locality Info
+          format: string
+          example: Nelamangala
+        zipcode:
+          type: integer
+          format: int64
+          description: postal code
+          example: 5600278
+        state:
+          type: string
+          description: state detail
+          format: string
+          example: Kar
+        country:
+          type: string
+          description: Country Info
+          format: string
+          example: IN
+
+
+
+    PatchRequest:
+      type: array
+      items:
+        $ref: "#/components/schemas/Sale_OrderPatchDocument"
+
+    Sale_OrderPatchDocument:
+      description: A JSONPatch document as defined by RFC 6902
+      required:
+        - "op"
+        - "path"
+      properties:
+        op:
+          type: string
+          description: The operation to be performed
+          enum:
+            - "add"
+            - "remove"
+            - "replace"
+            - "move"
+            - "copy"
+            - "test"
+        path:
+          type: string
+          description: A JSON-Pointer
+        value:
+          type: object
+          description: The value to be used within the operations.
+        from:
+          type: string
+          description: A string containing a JSON Pointer value.
+
+
+
+    UpsertInfo:
+      title: UpsertInfo
+      type: object
+      nullable: true
+      properties:
+        createdBy:
+          type: string
+          description: user details who created the sale order
+          nullable: true
+        modifiedBy:
+          type: string
+          description: user details who last modified the sale order
+          nullable: true
+        createdOn:
+          type: string
+          readOnly: true
+          description: creation date time of the sale order.
+          format: date-time
+          nullable: true
+        modifiedOn:
+          type: string
+          readOnly: true
+          description: last modified date time of the sale order.
+          format: date-time
+          nullable: true

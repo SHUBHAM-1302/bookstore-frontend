@@ -1,0 +1,74 @@
+<p-confirmPopup class="" *ngIf="userprofileForm.valid && userprofileForm.dirty "></p-confirmPopup>
+<div class="flex flex-column gap-pb">
+    <div class="flex flex-column gap-p">
+        <div class="clrBlue">
+            My Bio
+        </div>
+        <div>
+            <form [formGroup]="userprofileForm">
+                <div class="flex flex-column gap-3 w-30rem">
+
+                    <div class="flex flex-column gap-05">
+                        <label for="firstName"> First Name </label>
+                        <input pInputText type="text" id="firstName" formControlName="firstName" autocomplete="off">
+                        <small
+                            *ngIf="userprofileForm.get('firstName').hasError('required') && (userprofileForm.get('firstName').touched && userprofileForm.get('firstName').dirty)"
+                            id="buyerName-help" class="p-error">
+                            Please enter a valid First Name.
+                        </small>
+                        <small
+                            *ngIf="userprofileForm.get('firstName').hasError('pattern') && (userprofileForm.touched || userprofileForm.dirty)  "
+                            id="buyerMark-help" class="p-error">
+                            Please enter a valid First Name.
+                        </small>
+                    </div>
+                    <div class="flex flex-column p-05">
+                        <label for="lastName"> Last Name </label>
+                        <input pInputText type="text" id="lastName" formControlName="lastName" autocomplete="off">
+                    </div>
+
+                    <div class="flex flex-column gap-05">
+                        <label for="mobileNumber"> Mobile Number </label>
+                        <div class="pt-2 pl-2"> {{userprofileForm.get('mobileNumber').value}}</div>
+                        <small *ngIf="userprofileForm.get('mobileNumber').hasError('numberExists')" id="username-help"
+                            class="p-error">
+                            Given Number already Registered .
+                        </small>
+                        <small *ngIf="userprofileForm.get('mobileNumber').hasError('maxlength')" id="username-help"
+                            class="p-error">Exceed max length 10</small>
+                        <small *ngIf="userprofileForm.get('mobileNumber').hasError('pattern')" id="username-help"
+                            class="p-error">Please enter a valid number</small>
+                    </div>
+
+                    <div class="flex fd-row gap-2">
+                        <div class="card flex justify-content-center gap-2">
+                            <p-button id="new-so" (click)="confirmUpdateAction($event)" icon="pi pi-check"
+                                label='Update' [disabled]="!userprofileForm.dirty" ></p-button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <div class=" flex flex-column gap-p">
+        <div class="clrBlue">
+            My Mercodesk Membership
+        </div>
+        <div class="flex flex-column gap-pl">
+
+            <div *ngFor="let items of userIdentities" class="flex flex-row gap-025">
+                <div class="font-italic">
+                    {{ items.role }}
+                </div>
+                <div class="font-normal">
+                    at {{ items.firm}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
